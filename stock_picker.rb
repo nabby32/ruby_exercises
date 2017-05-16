@@ -8,8 +8,8 @@ def stock_picker(day_array)
 		#Check numbers after the day in question for smaller values.
 		while place < day_array.length
 			#If smaller values result in larger profit, update max profit value and the days to achieve it.
-			if (day - day_array[place]) > profit
-				profit = day - day_array[place]
+			if (day_array[place] - day) > profit
+				profit = day_array[place] - day
 				answer.clear
 				answer.push(day_array.index(day))
 				answer.push(place)
@@ -24,4 +24,8 @@ def stock_picker(day_array)
 		return "Hopefully you didn't buy this, because it only went down--no profit to be made."
 	end
 end
+
+prices = [2, 5, 9, 100, 389, 56212]
+
+puts stock_picker(prices)
 
