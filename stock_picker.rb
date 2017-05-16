@@ -25,7 +25,7 @@ def stock_picker(day_array)
 	end
 end
 
-prices = [2, 5, 9, 100, 389, 56212]
+prices = [999, 1000, 389, 71]
 
 puts stock_picker(prices)
 
