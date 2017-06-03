@@ -25,7 +25,16 @@ def stock_picker(day_array)
 	end
 end
 
-prices = [999, 1000, 389, 71]
-
-puts stock_picker(prices)
-
+def stock_picker_rev(price_array)
+	profit = 0
+	days = []
+	price_array.each do |buy_price|
+		price_array[price_array.index(buy_price)..-1].each do |sell_price|
+			if sell_price - buy_price > profit
+				profit = sell_price - buy_price
+				days[0], days[1] = price_array.index(buy_price), price_array.index(sell_price)
+			end
+		end
+	end
+	p "You were best buying on day #{days[0]} and selling/ on day #{days[1]} for a profit of $#{profit}."		
+end
