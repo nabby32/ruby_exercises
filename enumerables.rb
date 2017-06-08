@@ -78,6 +78,46 @@ module Enumerable
 		end
 	end
 
+	#Return a new array with of values resulting from the passed block. If no
+	#block, return original array.
+	def my_map(&user_block)
+		result = []
+		if user_block
+			self.my_each do |element|
+				result << user_block.call(element)
+			end
+			return result
+		else
+			return self 
+		end
+	end
+
+	#Return the combined value of an operation executed on the elements, either
+	#with a block or a symbol. Initial value can be specified.
+	def my_inject(initial=self[0], symbol=nil)
+		return_value = initial
+		if symbol
+			self.my_each do |element|
+				return_value = return_value.send(symbol, element)
+			end
+			puts return_value
+		elsif block_given?
+			self.length.times do |index|
+				return_value += yield(return_value, self[index])
+			end
+			return return_value
+		end
+	end
+
+	#Use my_inject to make a method which multiplies each element to the combined 
+	#value as it goes along
+	def multiply_els
+		self.my_inject(self[0],:*)
+	end
+
+
+			
+
 
 end
 
