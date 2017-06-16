@@ -80,21 +80,40 @@ module Enumerable
 
 	#Return a new array with of values resulting from the passed block. If no
 	#block, return original array.
-	def my_map(&user_block)
+	def my_map
 		result = []
-		if user_block
+		if block_given?
 			self.my_each do |element|
 				result << user_block.call(element)
 			end
-			return result
+			result
 		else
-			return self 
+			self 
 		end
 	end
 
+	def my_mapp(user_proc=nil)
+		result = []
+		if user_proc
+			self.my_each do |element|
+				result << user_proc.call(element)
+			end
+			result
+		elsif block_given?
+			self.my_each do |elem|	
+				result << yield(elem)
+			end
+			result
+		else 
+			self
+		end
+	end
+
+
+
 	#Return the combined value of an operation executed on the elements, either
 	#with a block or a symbol. Initial value can be specified.
-	def my_inject(initial=self[0], symbol=nil)
+	def my_inject(symbol=nil, initial=0)
 		return_value = initial
 		if symbol
 			self.my_each do |element|
@@ -105,14 +124,14 @@ module Enumerable
 			self.length.times do |index|
 				return_value += yield(return_value, self[index])
 			end
-			return return_value
+			return_value
 		end
 	end
 
 	#Use my_inject to make a method which multiplies each element to the combined 
 	#value as it goes along
 	def multiply_els
-		self.my_inject(self[0],:*)
+		self.my_inject(:*, self[0])
 	end
 
 
