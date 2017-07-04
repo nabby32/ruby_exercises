@@ -36,10 +36,10 @@ class TicTacToe
 			@@plays += 1
 			puts "\n"
 			@board.display
-			player_switch(@player_up)
 			if @@plays >= 5 
 				winner?
 			end
+			player_switch(@player_up)
 		else
 			puts "\nThat spot is marked already; please choose another.\n"
 			choose(@player_up)
@@ -55,6 +55,19 @@ class TicTacToe
 		choose(@player_up) 
 	end
 
+	def winner?
+		winners = [[0,1,2], [3,4,5], [6,7,8], [0,4,8], [6,4,2], [0,3,6], [1,4,7], [2,5,8]]
+		winners.each do |array|
+			temp = array & @player_up.picks
+			if temp.length >= 3
+				puts "#{@player_up.name} WINS!! Great job, #{@player_up.name}!\n"
+				replay
+			end
+			temp = []
+		end
+	end
+
+
 	def replay
 		print "Play again? (Y/N)"
 		reply = gets.chomp.downcase
@@ -62,6 +75,8 @@ class TicTacToe
 		if reply == "y" || reply == "yes"
 			random == 1 ? @player_up = @player1 : @player_up = @player2
 			@@plays = 0
+			@player1.picks = Array.new
+			@player2.picks = Array.new
 			@board = Board.new
 			@board.display
 			puts "#{@player_up.name}, you go first this time."
@@ -81,6 +96,7 @@ end
 
 class Player
 	attr_reader :name, :picks, :marker
+	attr_writer :picks
 	@@players = 0
 
 	def initialize
