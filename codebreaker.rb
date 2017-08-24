@@ -5,40 +5,14 @@ class Codebreaker
 	@@games = 0
 	#Initialize game based on 1 or 2 players.
 	def initialize
-		if num_players? == 1
-			@player1 = Player.new
-			@computer1 = Computer.new
-			@opponent = @computer1
-			@board = Board.new
-			welcome
-		else
-			@player1 = Player.new
-			@player2 = Player.new
-			@opponent = @player2
-			@board = Board.new
-			welcome
-		end
+		@player1 = Player.new
+		@player2 = Player.new
+		@opponent = @player2
+		@board = Board.new
+		welcome
 	end
 
-	#Get number of players: 1 or 2.
-	def num_players?
-		puts "Please select one player or two player. (1/2)"
-		player_num = gets.chomp
-		unless player_num == "one" || player_num == "1" || player_num == "two" || 
-		player_num == "2";
-			puts "\nDidn't catch that. Please select one or two player."
-			num_players?
-		end
-
-		if player_num == "1" || player_num == "one"
-			player_num = 1
-		elsif player_num == "2" || player_num == "two"
-			player_num = 2
-		end
-		player_num
-	end
-
-	#Welcome both human players, or computer and player.
+	#Welcome both players.
 	def welcome
 		puts "\nWelcome message\n"
 		@board.display
@@ -75,7 +49,7 @@ class Codebreaker
 			false
 		end
 	end
-	#Coder picks code. Need to write for Al to pick code.
+	#Coder picks code.
 	def pick_code
 		puts "OK, #{@coder.name}, please enter your code as four letters, with each letter representing the first letter of your chosen color (ex. gyrp)."
 		code = gets.chomp.downcase.split("")
@@ -90,7 +64,6 @@ class Codebreaker
 	end
 
 	def checker
-		#Checks for length; need to check for accuracy of input.
 		if @coder.code[0].split(/\s/).length != 4
 			false
 		else
@@ -128,21 +101,6 @@ class Player
 		@code = []
 		@guesses = []
 	end
-end
-
-class Computer < Player
-	attr_reader :name, :code, :guesses
-	@@comps = 0
-	def initialize
-		if @@comps >= 1
-			@@comps = 0
-			@@comps += 1
-		elsif @@comps < 1
-			@@comps +=1
-		end
-		@name = "Al"
-	end
-
 end
 
 class Board
