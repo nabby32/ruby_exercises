@@ -17,16 +17,19 @@ class Codebreaker
 		you will have 12 guesses to break the computer's
 		code, which is comprised of four random numbers
 		from 1 to 6.\n"
+		sleep(1.5)
 		@board.display
-		puts "\nFirst, let's see if you or the computer will try code breaking first.\n
-		Determining order...\n"
+		puts "\nFirst, let's see if you or the computer will try code breaking first.\n"
+		sleep(1.5)
+		puts "Determining order...\n"
+		sleep(3)
 		order_creator
 	end
 
 	#Establish first coder/guesser.
 	def order_creator
-		num = (rand(100)/100).to_f
-		if num >= 0.5
+		num = rand(100)
+		if num >= 50
 			@player1.order = 2
 			@computer.order = 1
 			puts "\nIt looks like the computer will code first, so you will guess.\n"
@@ -42,14 +45,16 @@ class Codebreaker
 	#Randomly generate the computer's color code.
 	def computer_code
 		4.times do
-			@computer.code << rand(6)
+			@computer.code << rand(6).to_s
 		end
+		player_guess
 	end
 
 	#Player creates code
 	def player_code
 		puts "\n#{@player1.name}, please enter your four digit code."
 		@player1.code = gets.chomp.scan(/\d/).to_a
+		#Insert code to ascertain it is only numbers 1-6.
 		computer_guess
 	end
 
@@ -57,9 +62,22 @@ class Codebreaker
 	def player_guess
 		puts "The computer has created its code. Please enter guess number #{@player1.guess_count}."
 		@player1.guesses << gets.chomp.scan(/\d/).to_a
-		@player1.guess_count += 1
-		#Code to compare guesses against computer code.
+		@player1.guesses[(@player1.guess_count-1)].each do |num, index|
+			@computer.code.each do |c_num, c_index|
+				if num == c_num
+					if index == c_index
+						@board[c_index] = "M"
+					else
+						#Result for number, not location, match.
+					end
+				end
+			end
+		end
+		@player1.guess_count += 1		
+	end
 
+	def computer_guess
+		puts "There is no function for this action yet. Sorry!"
 	end
 
 end
@@ -74,7 +92,7 @@ class Player
 		@name = gets.chomp.downcase.capitalize
 		@code = []
 		@guesses = []
-		@guess_count = 0
+		@guess_count = 1
 		@order = 0
 	end
 end
@@ -120,4 +138,6 @@ end
 #Welcome player to the game.
 #Establish coding order; player 1 or computer first.
 #Establish code, from computer or player.
+#Have break make a guess.
+#Compare guess against the code.
 
