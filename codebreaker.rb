@@ -8,6 +8,8 @@ class Codebreaker
 		@player1 = Player.new
 		@computer = Computer.new
 		@board = Board.new
+		@guesser = Guesser.new
+		@coder = Coder.new
 		welcome
 	end
 
@@ -18,7 +20,6 @@ class Codebreaker
 		code, which is comprised of four random numbers
 		from 1 to 6.\n"
 		sleep(1.5)
-		@board.display
 		puts "\nFirst, let's see if you or the computer will try code breaking first.\n"
 		sleep(1.5)
 		puts "Determining order...\n"
@@ -30,13 +31,13 @@ class Codebreaker
 	def order_creator
 		num = rand(100)
 		if num >= 50
-			@player1.order = 2
-			@computer.order = 1
+			@guesser = @player1
+			@coder = @computer
 			puts "\nIt looks like the computer will code first, so you will guess.\n"
 			computer_code
 		else
-			@player1.order = 1
-			@computer.order = 2
+			@guesser = @computer
+			@coder = @player1
 			puts "\n#{@player1.name}, you'll code first, and the computer will guess.\n"
 			player_code
 		end
@@ -60,24 +61,50 @@ class Codebreaker
 
 	#Player guesses code
 	def player_guess
-		puts "The computer has created its code. Please enter guess number #{@player1.guess_count}."
-		@player1.guesses << gets.chomp.scan(/\d/).to_a
-		@player1.guesses[(@player1.guess_count-1)].each do |num, index|
-			@computer.code.each do |c_num, c_index|
-				if num == c_num
-					if index == c_index
-						@board[c_index] = "M"
-					else
-						#Result for number, not location, match.
+		puts "The computer has created its code."
+		comparitor
+	end
+
+	def comparitor
+		total_match = false
+		while @guesser.guess_count >= 12 || total_match == false
+			puts "Please enter guess number #{@guesser.guess_count}."
+			match = false
+			matches = 0
+			match_loc = []
+			@guesser.guesses << gets.chomp.scan(/\d/).to_a
+			@guesser.guesses[@guesser.guess_count - 1].each do |guess_num|
+				@coder.code.each do |code_num|
+					if guess_num == code_num
+						match = true
+						matches += 1
+						if @guesser.guesses.index(guess_num) == @coder.code.index(code_num)
+							match_loc << @guesser.guesses.index(guess_num)
+						end
 					end
 				end
 			end
-		end
-		@player1.guess_count += 1		
+			if match == true && match_loc.empty? == true
+				puts "You guessed #{matches} numbers correctly! Unfortunately, not at the right location."
+				comparitor
+				@guesser.guess_count += 1
+			elsif match == true && match_loc.empty? == false && match_loc.length < 3
+				puts "You guess #{matches} numbers correctly, at spaces #{match_loc}."
+				comparitor
+				@guesser.guess_count += 1
+			elsif match_loc.length == 3
+				puts "You broke the code! Great job!"
+				total_match = true
+				play_again? #Create play again code.
+			elsif match == false
+				puts "Sorry, none of your numbers are correct."
+				@guesser.guess_count += 1
+			end
+		end		
 	end
 
 	def computer_guess
-		puts "There is no function for this action yet. Sorry!"
+		puts "The computer is creating its guesses."
 	end
 
 end
@@ -99,7 +126,8 @@ end
 
 class Computer
 	#Establish computer with secret code, and guesses.
-	attr_accessor :code, :guesses, :guess_count, :order
+	attr_reader :code
+	attr_accessor :guesses, :guess_count, :order
 	def initialize
 		@code = []
 		@guesses = []
@@ -130,6 +158,16 @@ class Board
 		puts "| " + @board[36..39].join(" | ") + " |" + "\n"
 		puts "| " + @board[40..43].join(" | ") + " |" + "\n"
 		puts "| " + @board[44..47].join(" | ") + " |" + "\n\n"
+	end
+end
+
+class Guesser
+	def initialize
+	end
+end
+
+class Coder
+	def initialize
 	end
 end
 
